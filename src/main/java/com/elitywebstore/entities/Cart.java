@@ -28,8 +28,7 @@ public class Cart {
     )
     private List<Product> products = new ArrayList<>();
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "cart")
     private User user;
 
 }
