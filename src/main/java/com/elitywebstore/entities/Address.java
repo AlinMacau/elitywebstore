@@ -17,7 +17,7 @@ public class Address {
     @GeneratedValue
     private Long id;
 
-    private String type;//billing/delivery
+    private AddressType addressType;//billing/delivery
 
     private String county;
     private String city;

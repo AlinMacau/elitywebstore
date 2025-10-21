@@ -1,9 +1,7 @@
 package com.elitywebstore.model.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import com.elitywebstore.entities.AddressType;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SignUpRequestDto {
+public class UserUpdateRequestDto {
+
+    private Long id;
+
     @Size(min = 8)
     private String password;
     @Email
@@ -29,4 +30,14 @@ public class SignUpRequestDto {
 
     @Pattern(regexp = "\\d+", message = "Must contain only digit")
     private String phoneNumber;
+
+    private AddressType addressType;
+
+    private String county;
+    private String city;
+    private String street;
+
+    private Integer postalCode;
+
+
 }
