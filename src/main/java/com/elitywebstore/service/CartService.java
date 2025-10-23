@@ -26,14 +26,19 @@ public class CartService {
         @Autowired
         private ProductRepository productRepository;
 
+        @Autowired
+        private UserService userService;
+
+        @Autowired
+        private ProductService productService;
+
     public void updateCart(UpdateCartDto updateCartDto) {
-        User user = userRepository.findById(updateCartDto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userService.getById(updateCartDto.getUserId());
+
         user.setCart(new Cart());
         Cart cart = user.getCart();
 
-        Product product = productRepository.findById(updateCartDto.getProductId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Product product = productService.getById(updateCartDto.getProductId());
 
         cart.getProducts().addAll(Collections.nCopies(updateCartDto.getQuantity(), product));
 
