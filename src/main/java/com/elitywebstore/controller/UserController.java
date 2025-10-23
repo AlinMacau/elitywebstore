@@ -28,14 +28,21 @@ public class UserController {
         return userService.listAllUsers();
     }
 
+    @GetMapping(ApiEndpointConstants.USERS_GET_BY_ID)
+    public UserResponseDto getById(@PathVariable Long id){
+        return userService.getDtoById(id);
+    }
+
     @PutMapping(ApiEndpointConstants.USERS_UPDATE)
     public void updateUser(@RequestBody UserUpdateRequestDto userUpdateRequestDto){
         userService.updateUser(userUpdateRequestDto);
     }
 
-    //getbyid
-    //delete
-    //update for address (separat sau nu?)
+    @DeleteMapping(ApiEndpointConstants.USERS_DELETE_BY_ID)
+    public void deleteById(@PathVariable Long id){
+        userService.deleteById(id);
+    }
 
+    //update for address (separat sau nu?)
 
 }

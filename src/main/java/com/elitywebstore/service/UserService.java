@@ -53,7 +53,18 @@ public class UserService {
         return userRepository.findAll().stream()
                 .map(user -> modelMapper.map(user, UserResponseDto.class))
                 .collect(Collectors.toList());
+    }
 
+    public User getById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    public UserResponseDto getDtoById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        return modelMapper.map(user, UserResponseDto.class);
     }
 
     public void updateUser(UserUpdateRequestDto userUpdateRequestDto) {
@@ -75,5 +86,10 @@ public class UserService {
 //        user.getDetails().getAddresses().get(0).setPostalCode(userUpdateRequestDto.getPostalCode());
 
         userRepository.save(user);
+    }
+
+
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);     //implementam soft delete?
     }
 }
