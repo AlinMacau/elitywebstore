@@ -1,6 +1,9 @@
 package com.elitywebstore.config;
 
+import com.elitywebstore.entities.User;
+import com.elitywebstore.model.response.UserResponseDto;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +12,19 @@ public class ApplicationCustomBeans {
 
     @Bean
     public ModelMapper createModelmapperInstance(){
-        return new ModelMapper();
+
+        ModelMapper mapper = new ModelMapper();
+
+        mapper.addMappings((new PropertyMap<User, UserResponseDto>() {
+
+            @Override
+            protected void configure() {
+                map(source.getDetails().getFirstName(), destination.getFirstName());
+                map(source.getDetails().getLastName(), destination.getLastname());
+                map(source.getDetails().getPhoneNumber(), destination.getPhoneNumber());
+            }
+        }));
+
+        return mapper;
     }
 }
