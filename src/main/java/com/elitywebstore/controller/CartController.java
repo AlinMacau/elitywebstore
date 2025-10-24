@@ -3,6 +3,7 @@ package com.elitywebstore.controller;
 import com.elitywebstore.config.ApiEndpointConstants;
 import com.elitywebstore.model.request.UpdateCartDto;
 import com.elitywebstore.service.CartService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class CartController {
     private CartService cartService;
 
     @PutMapping()
-    public void updateCart(@RequestBody UpdateCartDto updateCartDto){
+    public void updateCart(@Valid @RequestBody UpdateCartDto updateCartDto){
         cartService.updateCart(updateCartDto);
     }
 

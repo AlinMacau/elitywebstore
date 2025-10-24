@@ -23,7 +23,7 @@ public class UserController {
         userService.createUser(signUpRequestDto);
     }
 
-    @GetMapping(ApiEndpointConstants.USERS_LIST_ALL)
+    @GetMapping()
     public List<UserResponseDto> listAllUsers(){
         return userService.listAllUsers();
     }
@@ -33,8 +33,8 @@ public class UserController {
         return userService.getDtoById(id);
     }
 
-    @PutMapping(ApiEndpointConstants.USERS_UPDATE)
-    public void updateUser(@RequestBody UserUpdateRequestDto userUpdateRequestDto){
+    @PutMapping()
+    public void updateUser(@Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto){
         userService.updateUser(userUpdateRequestDto);
     }
 

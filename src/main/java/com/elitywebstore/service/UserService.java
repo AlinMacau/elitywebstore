@@ -27,8 +27,6 @@ public class UserService {
 
     @Autowired
     ModelMapper modelMapper;
-    private Address address;
-
 
     public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
 
@@ -61,17 +59,14 @@ public class UserService {
     }
 
     public UserResponseDto getDtoById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = getById(id);
 
         return modelMapper.map(user, UserResponseDto.class);
     }
 
     public void updateUser(UserUpdateRequestDto userUpdateRequestDto) {
-        User user = userRepository.findById(userUpdateRequestDto.getId())
-                .orElseThrow(()-> new EntityNotFoundException("User not found"));
+        User user = getById(userUpdateRequestDto.getId());
 
-        user.setId(userUpdateRequestDto.getId());
         user.setEmail(userUpdateRequestDto.getEmail());
         user.setPassword(userUpdateRequestDto.getPassword());
 
@@ -87,7 +82,6 @@ public class UserService {
 
         userRepository.save(user);
     }
-
 
     public void deleteById(Long id) {
         userRepository.deleteById(id);     //implementam soft delete?
