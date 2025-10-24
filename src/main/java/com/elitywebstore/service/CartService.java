@@ -44,6 +44,14 @@ public class CartService {
 
         userRepository.save(user);
 
+    }
 
+    public Cart getById(Long id){
+       return cartRepository.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException("Cart not found with id: " + id));
+    }
+
+    public Cart save(Cart cart){
+        return cartRepository.save(cart);
     }
 }

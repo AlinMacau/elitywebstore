@@ -25,6 +25,8 @@ public class Order {
 
     private STATUS status;
 
+    private Double price;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
