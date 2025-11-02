@@ -9,6 +9,7 @@ public class ApiEndpointConstants {
     public static final String USERS_DELETE_BY_ID = "/{id}";
 
     public static final String BASE_CARTS_API = BASE_API_V1 + "/carts";
+    public static final String CARTS_GET_BY_ID = "/{id}";
 
     public static final String BASE_ORDERS_API = BASE_API_V1 + "/orders";
 

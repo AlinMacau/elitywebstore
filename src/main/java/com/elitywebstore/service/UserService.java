@@ -84,6 +84,6 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
-        userRepository.deleteById(id);     //implementam soft delete?
+        userRepository.deleteById(id);     // soft delete?
     }
 }

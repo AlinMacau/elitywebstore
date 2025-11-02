@@ -3,12 +3,15 @@ package com.elitywebstore.service;
 import com.elitywebstore.entities.Cart;
 import com.elitywebstore.entities.Product;
 import com.elitywebstore.entities.User;
+import com.elitywebstore.exceptions.StockException;
 import com.elitywebstore.model.request.UpdateCartDto;
+import com.elitywebstore.model.response.CartResponseDto;
 import com.elitywebstore.repository.CartRepository;
 import com.elitywebstore.repository.ProductRepository;
 import com.elitywebstore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,15 +34,23 @@ public class CartService {
 
         @Autowired
         private ProductService productService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public void updateCart(UpdateCartDto updateCartDto) {
         User user = userService.getById(updateCartDto.getUserId());
 
-        user.setCart(new Cart());
+        if(user.getCart() == null){
+            user.setCart(new Cart());
+        }
+
         Cart cart = user.getCart();
 
         Product product = productService.getById(updateCartDto.getProductId());
-
+        //stock check
+        if(updateCartDto.getQuantity() > product.getStock())
+            throw new StockException(product);
+        //add to cart
         cart.getProducts().addAll(Collections.nCopies(updateCartDto.getQuantity(), product));
 
         userRepository.save(user);
@@ -50,6 +61,18 @@ public class CartService {
        return cartRepository.findById(id)
                 .orElseThrow(()-> new EntityNotFoundException("Cart not found with id: " + id));
     }
+
+
+    public CartResponseDto getDtoById(Long id){
+        Cart cart = getById(id);
+
+
+        CartResponseDto map = modelMapper.map(cart, CartResponseDto.class);
+
+        return map;
+
+    }
+
 
     public Cart save(Cart cart){
         return cartRepository.save(cart);
