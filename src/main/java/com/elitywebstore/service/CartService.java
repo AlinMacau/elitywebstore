@@ -67,9 +67,18 @@ public class CartService {
         Cart cart = getById(id);
 
 
-        CartResponseDto map = modelMapper.map(cart, CartResponseDto.class);
+        CartResponseDto cartResponseDto = modelMapper.map(cart, CartResponseDto.class);
+        Double productsPrice = cart.getProducts().stream()
+                        .mapToDouble(Product::getPrice)
+                                .sum();
+        Double deliveryPrice = 20.0;
+        Double total = productsPrice + deliveryPrice;
 
-        return map;
+        cartResponseDto.setProductsPrice(productsPrice);
+        cartResponseDto.setDeliveryPrice(deliveryPrice);
+        cartResponseDto.setTotal(total);
+
+        return cartResponseDto;
 
     }
 
