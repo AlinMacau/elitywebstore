@@ -17,4 +17,8 @@ public class ProductService {
        return productRepository.findById(id)
                 .orElseThrow(()->new EntityNotFoundException("User not found"));
     }
+
+    public void update(Product product){
+        productRepository.save(product);
+    }
 }

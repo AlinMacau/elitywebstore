@@ -2,12 +2,16 @@ package com.elitywebstore.service;
 
 import com.elitywebstore.entities.Cart;
 import com.elitywebstore.entities.Order;
+import com.elitywebstore.entities.Product;
 import com.elitywebstore.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.elitywebstore.entities.STATUS.PENDING;
 
@@ -19,6 +23,9 @@ public class OrderService {
 
     @Autowired
     private CartService cartService;
+
+    @Autowired
+    private ProductService productService;
 
     public Order createOrder(Long cartId) {
         Cart cart = cartService.getById(cartId);
@@ -41,6 +48,24 @@ public class OrderService {
         orderRepository.save(order);
         cartService.save(cart);
 
+        updateStock(order);
+
         return order;
+    }
+
+    private void updateStock(Order order) {
+        HashMap<Product, Integer> map = new HashMap<>();
+
+        for(Product product : order.getProducts()){
+            if (map.containsKey(product))
+                    map.put(product, map.get(product)+1);
+            else
+                map.put(product, 1);
+        }
+
+        map.forEach(((product, count) -> {
+            product.setStock(product.getStock()-count);
+            productService.update(product);
+        }));
     }
 }
