@@ -15,7 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDetails {
+public class
+UserDetails {
     @Id
     @GeneratedValue
     private Long id;

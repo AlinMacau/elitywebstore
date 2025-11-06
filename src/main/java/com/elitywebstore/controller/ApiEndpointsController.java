@@ -18,8 +18,8 @@ public class ApiEndpointsController {
 
         endpoints.put(ApiEndpointConstants.BASE_API_V1, "Lists all available endpoints in the api");
         endpoints.put(ApiEndpointConstants.USERS_SIGNUP, "Sign up for users");
-        endpoints.put(ApiEndpointConstants.USERS_GET_BY_ID, "Get user by id");
-        endpoints.put(ApiEndpointConstants.USERS_DELETE_BY_ID, "Delete user by id");
+        endpoints.put(ApiEndpointConstants.GET_BY_ID, "Get user by id");
+        endpoints.put(ApiEndpointConstants.DELETE_BY_ID, "Delete user by id");
 
 
         return endpoints;

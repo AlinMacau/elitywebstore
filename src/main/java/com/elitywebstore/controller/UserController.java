@@ -28,7 +28,7 @@ public class UserController {
         return userService.listAllUsers();
     }
 
-    @GetMapping(ApiEndpointConstants.USERS_GET_BY_ID)
+    @GetMapping(ApiEndpointConstants.GET_BY_ID)
     public UserResponseDto getById(@PathVariable Long id){
         return userService.getDtoById(id);
     }
@@ -38,7 +38,7 @@ public class UserController {
         userService.updateUser(userUpdateRequestDto);
     }
 
-    @DeleteMapping(ApiEndpointConstants.USERS_DELETE_BY_ID)
+    @DeleteMapping(ApiEndpointConstants.DELETE_BY_ID)
     public void deleteById(@PathVariable Long id){
         userService.deleteById(id);
     }

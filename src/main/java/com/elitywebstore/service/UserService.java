@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,12 +74,6 @@ public class UserService {
         user.getDetails().setFirstName(userUpdateRequestDto.getFirstName());
         user.getDetails().setLastName(userUpdateRequestDto.getLastName());
         user.getDetails().setPhoneNumber(userUpdateRequestDto.getPhoneNumber());
-
-//        user.getDetails().getAddresses().get(0).setAddressType(userUpdateRequestDto.getAddressType());
-//        user.getDetails().getAddresses().get(0).setCounty(userUpdateRequestDto.getCounty());
-//        user.getDetails().getAddresses().get(0).setCity(userUpdateRequestDto.getCity());
-//        user.getDetails().getAddresses().get(0).setStreet(userUpdateRequestDto.getStreet());
-//        user.getDetails().getAddresses().get(0).setPostalCode(userUpdateRequestDto.getPostalCode());
 
         userRepository.save(user);
     }

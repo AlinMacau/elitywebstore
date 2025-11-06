@@ -51,7 +51,10 @@ public class CartService {
         if(updateCartDto.getQuantity() > product.getStock())
             throw new StockException(product);
         //add to cart
-        cart.getProducts().addAll(Collections.nCopies(updateCartDto.getQuantity(), product));
+        if(updateCartDto.getQuantity()>0)
+            cart.getProducts().addAll(Collections.nCopies(updateCartDto.getQuantity(), product));
+        else
+            cart.getProducts().removeAll(Collections.nCopies(updateCartDto.getQuantity()*-1, product));
 
         userRepository.save(user);
 

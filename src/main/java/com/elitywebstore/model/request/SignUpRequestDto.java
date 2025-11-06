@@ -14,8 +14,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SignUpRequestDto {
+    @NotBlank(message = "Password should not be blank")
     @Size(min = 8)
     private String password;
+
+    @NotBlank(message = "Email should not be blank")
     @Email
     private String email;
 
@@ -27,6 +30,8 @@ public class SignUpRequestDto {
     @Size(min = 2, message = "Last name should contain more than 2 characters")
     private String lastName;
 
-    @Pattern(regexp = "\\d+", message = "Must contain only digit")
+    @NotBlank(message = "Phone number should not be blank")
+    @Size(min = 10, max = 10, message = "Phone number must be exactly 10 digits")
+    @Pattern(regexp = "\\d+", message = "Phone number must contain only digit")
     private String phoneNumber;
 }
