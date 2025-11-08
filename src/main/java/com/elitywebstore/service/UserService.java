@@ -1,5 +1,6 @@
 package com.elitywebstore.service;
 
+import com.elitywebstore.config.JwtFilter;
 import com.elitywebstore.entities.Address;
 import com.elitywebstore.entities.User;
 import com.elitywebstore.entities.UserDetails;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,9 @@ public class UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Value("${secretKey}")
+    public String secretKey;
 
     public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
 
@@ -105,9 +110,13 @@ public class UserService {
                     .setSubject(user.getEmail())
                     .setIssuedAt(new Date())
                     .setExpiration(Date.from(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
-                    .signWith(SignatureAlgorithm.HS256, "e7d7c5c5acc9d80aa11dbe3a2f3fe55bc1d5148a91184b119a60db7883724015".getBytes())
+                    .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                     .compact();
         }
         return "Invalid Credentials";
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
