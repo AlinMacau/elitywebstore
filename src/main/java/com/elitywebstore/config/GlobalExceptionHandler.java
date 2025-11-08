@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("errorMessage", ex.getMessage());
 
+        ex.printStackTrace();
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 

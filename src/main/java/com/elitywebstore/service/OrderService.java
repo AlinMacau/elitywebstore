@@ -6,6 +6,7 @@ import com.elitywebstore.entities.Product;
 import com.elitywebstore.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ public class OrderService {
         double price = cart.getProducts().stream()
                 .mapToDouble(product -> product.getPrice())
                 .sum();
-
 
         Order order = Order.builder()
                 .date(LocalDate.now())
@@ -67,5 +67,9 @@ public class OrderService {
             product.setStock(product.getStock()-count);
             productService.update(product);
         }));
+    }
+    @Transactional
+    public Integer approveNewOrders(){
+        return orderRepository.approveNewOrders();
     }
 }
