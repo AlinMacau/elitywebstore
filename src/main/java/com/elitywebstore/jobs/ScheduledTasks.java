@@ -18,9 +18,9 @@ public class ScheduledTasks {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    @Scheduled(fixedRate = 5000)
-    public void reportCurrentTime() {
-//        log.info("The time is now {}", dateFormat.format(new Date()));
-        log.info("Approved {} new orders" , orderService.approveNewOrders());
-    }
+//    @Scheduled(fixedRate = 5000)
+//    public void reportCurrentTime() {
+////        log.info("The time is now {}", dateFormat.format(new Date()));
+//        log.info("Approved {} new orders" , orderService.approveNewOrders());
+//    }
 }

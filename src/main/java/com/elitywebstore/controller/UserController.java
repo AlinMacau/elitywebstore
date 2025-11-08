@@ -23,12 +23,17 @@ public class UserController {
         userService.createUser(signUpRequestDto);
     }
 
+    @PostMapping(ApiEndpointConstants.USERS_LOGIN)
+    public String login(@Valid @RequestBody SignUpRequestDto signUpRequestDto){
+        return userService.loginUser(signUpRequestDto);
+    }
+
     @GetMapping()
     public List<UserResponseDto> listAllUsers(){
         return userService.listAllUsers();
     }
 
-    @GetMapping(ApiEndpointConstants.GET_BY_ID)
+    @GetMapping(ApiEndpointConstants.BY_ID)
     public UserResponseDto getById(@PathVariable Long id){
         return userService.getDtoById(id);
     }
@@ -38,7 +43,7 @@ public class UserController {
         userService.updateUser(userUpdateRequestDto);
     }
 
-    @DeleteMapping(ApiEndpointConstants.DELETE_BY_ID)
+    @DeleteMapping(ApiEndpointConstants.BY_ID)
     public void deleteById(@PathVariable Long id){
         userService.deleteById(id);
     }

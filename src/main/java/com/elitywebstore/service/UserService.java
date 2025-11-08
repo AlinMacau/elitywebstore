@@ -7,16 +7,27 @@ import com.elitywebstore.model.request.SignUpRequestDto;
 import com.elitywebstore.model.request.UserUpdateRequestDto;
 import com.elitywebstore.model.response.UserResponseDto;
 import com.elitywebstore.repository.UserRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +40,9 @@ public class UserService {
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
 
         UserDetails userDetails = UserDetails.builder()
@@ -39,7 +53,7 @@ public class UserService {
 
         User user = User.builder()
                 .email(signUpRequestDto.getEmail())
-                .password(signUpRequestDto.getPassword())
+                .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
                 .details(userDetails)
                 .build();
 
@@ -80,5 +94,20 @@ public class UserService {
 
     public void deleteById(Long id) {
         userRepository.deleteById(id);     // soft delete?
+    }
+
+    public String loginUser(@Valid SignUpRequestDto signUpRequestDto) {
+        User user = userRepository.getByEmail(signUpRequestDto.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        if(passwordEncoder.matches(signUpRequestDto.getPassword(), user.getPassword())){
+            return Jwts.builder()
+                    .setSubject(user.getEmail())
+                    .setIssuedAt(new Date())
+                    .setExpiration(Date.from(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
+                    .signWith(SignatureAlgorithm.HS256, "e7d7c5c5acc9d80aa11dbe3a2f3fe55bc1d5148a91184b119a60db7883724015".getBytes())
+                    .compact();
+        }
+        return "Invalid Credentials";
     }
 }

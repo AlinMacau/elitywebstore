@@ -2,6 +2,7 @@ package com.elitywebstore.controller;
 
 import com.elitywebstore.config.ApiEndpointConstants;
 import com.elitywebstore.model.request.AddressRequestDto;
+import com.elitywebstore.model.request.AddressUpdateRequestDto;
 import com.elitywebstore.model.response.AddressResponseDto;
 import com.elitywebstore.service.AddressService;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ public class AddressController {
         addressService.createAddress(addressRequestDto);
     }
 
-    @GetMapping(ApiEndpointConstants.GET_BY_ID)
+    @GetMapping(ApiEndpointConstants.BY_ID)
     public AddressResponseDto getById(@PathVariable Long id){
         return addressService.getDtoById(id);
     }
@@ -32,14 +33,14 @@ public class AddressController {
         return addressService.getAllByUserId(userId);
     }
 
-    @DeleteMapping(ApiEndpointConstants.DELETE_BY_ID)
-    public void deleteById(@PathVariable Long id){
-        addressService.deleteById(id);
+    @PutMapping
+    public void update(@Valid @RequestBody AddressUpdateRequestDto addressUpdateRequestDto){
+        addressService.update(addressUpdateRequestDto);
     }
 
-    @PutMapping
-    public void update(){
-        //TODO
+    @DeleteMapping(ApiEndpointConstants.BY_ID)
+    public void deleteById(@PathVariable Long id){
+        addressService.deleteById(id);
     }
 
 }
