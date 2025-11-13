@@ -2,25 +2,20 @@ package com.elitywebstore.service;
 
 import com.elitywebstore.entities.Address;
 import com.elitywebstore.model.request.AddressRequestDto;
+import com.elitywebstore.model.request.AddressUpdateRequestDto;
 import com.elitywebstore.model.response.AddressResponseDto;
 import com.elitywebstore.repository.AddressRepository;
-import com.elitywebstore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class AddressService {
-
-//    folosim @validated pe service si @valid pe metodele care folosesc dto-uri cu anotari de validare? notnull/size/etc
 
     @Autowired
     private AddressRepository addressRepository;
@@ -66,9 +61,20 @@ public class AddressService {
                 .collect(Collectors.toList());
     }
 
+    public void update(@Valid AddressUpdateRequestDto addressUpdateRequestDto) {
+        Address address = getById(addressUpdateRequestDto.getId());
+
+        address.setAddressType(addressUpdateRequestDto.getAddressType());
+        address.setCounty(addressUpdateRequestDto.getCounty());
+        address.setCity(addressUpdateRequestDto.getCity());
+        address.setStreet(addressUpdateRequestDto.getStreet());
+        address.setPostalCode(addressUpdateRequestDto.getPostalCode());
+
+        addressRepository.save(address);
+    }
+
     public void deleteById(Long id) {
         addressRepository.deleteById(id);
     }
-
 }
 
