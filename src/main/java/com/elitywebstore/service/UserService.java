@@ -1,6 +1,7 @@
 package com.elitywebstore.service;
 
 import com.elitywebstore.config.JwtFilter;
+import com.elitywebstore.config.SecretConfig;
 import com.elitywebstore.entities.Address;
 import com.elitywebstore.entities.User;
 import com.elitywebstore.entities.UserDetails;
@@ -45,8 +46,8 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Value("${secretKey}")
-    public String secretKey;
+    @Autowired
+    SecretConfig secretConfig;
 
     public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
 
@@ -110,7 +111,7 @@ public class UserService {
                     .setSubject(user.getEmail())
                     .setIssuedAt(new Date())
                     .setExpiration(Date.from(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
-                    .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+                    .signWith(SignatureAlgorithm.HS256, secretConfig.getSecretKey().getBytes())
                     .compact();
         }
         return "Invalid Credentials";

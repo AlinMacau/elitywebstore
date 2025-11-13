@@ -28,8 +28,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private UserService userService;
 
-    @Value("${secretKey}")
-    public String secretKey;
+    @Autowired
+    private SecretConfig secretConfig;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if(authHeader != null && authHeader.startsWith(BEARER)){
             String token = authHeader.substring(7);
             try {
-                Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();
+                Claims claims = Jwts.parser().setSigningKey(secretConfig.getSecretKey().getBytes()).parseClaimsJws(token).getBody();
                 String email = claims.getSubject();
                 if(email != null && SecurityContextHolder.getContext().getAuthentication() == null && userService.existsByEmail(email)){
                     UsernamePasswordAuthenticationToken u = new UsernamePasswordAuthenticationToken(email, null, null);

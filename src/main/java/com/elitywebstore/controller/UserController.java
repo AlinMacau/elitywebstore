@@ -18,16 +18,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(ApiEndpointConstants.USERS_SIGNUP)
-    public void signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto){
-        userService.createUser(signUpRequestDto);
-    }
-
-    @PostMapping(ApiEndpointConstants.USERS_LOGIN)
-    public String login(@Valid @RequestBody SignUpRequestDto signUpRequestDto){
-        return userService.loginUser(signUpRequestDto);
-    }
-
     @GetMapping()
     public List<UserResponseDto> listAllUsers(){
         return userService.listAllUsers();
@@ -48,6 +38,5 @@ public class UserController {
         userService.deleteById(id);
     }
 
-    //update for address (separat sau nu?)
 
 }

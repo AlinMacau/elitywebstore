@@ -37,7 +37,6 @@ public class AddressRequestDto {
     @Pattern(regexp = "\\d+", message = "Postal code must contain only digits")
     private String postalCode;
 
-
     @NotNull(message = "User id should not be blank")
     private Long userId;
 
