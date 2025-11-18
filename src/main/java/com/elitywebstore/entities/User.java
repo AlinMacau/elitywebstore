@@ -21,6 +21,8 @@ public class User {
 
     private String email;
 
+    private String activeToken;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "details_id", referencedColumnName = "id")
     private UserDetails details;

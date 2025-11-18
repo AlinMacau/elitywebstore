@@ -56,7 +56,7 @@ public class CartService {
         else
             cart.getProducts().removeAll(Collections.nCopies(updateCartDto.getQuantity()*-1, product));
 
-        userRepository.save(user);
+        userService.save(user);
 
     }
 

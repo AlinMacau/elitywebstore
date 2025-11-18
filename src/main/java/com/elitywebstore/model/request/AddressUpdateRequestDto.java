@@ -1,7 +1,6 @@
 package com.elitywebstore.model.request;
 
 import com.elitywebstore.entities.AddressType;
-import com.elitywebstore.entities.UserDetails;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -15,9 +14,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AddressRequestDto {
+public class AddressUpdateRequestDto {
 
-    @NotNull(message = "Address type should not be blank")
+    @NotNull(message = "Address id should not be null")
+    private Long id;
+
+    @NotNull(message = "Address type should not be null")
     private AddressType addressType;//billing/delivery
 
     @NotBlank(message = "County should not be blank")
@@ -36,8 +38,5 @@ public class AddressRequestDto {
     @Size(min =2, message = "Postal code must be exactly 6 characters")
     @Pattern(regexp = "\\d+", message = "Postal code must contain only digits")
     private String postalCode;
-
-    @NotNull(message = "User id should not be blank")
-    private Long userId;
 
 }

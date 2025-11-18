@@ -1,21 +1,15 @@
 package com.elitywebstore.service;
 
-import com.elitywebstore.entities.Address;
 import com.elitywebstore.entities.User;
-import com.elitywebstore.entities.UserDetails;
-import com.elitywebstore.model.request.SignUpRequestDto;
 import com.elitywebstore.model.request.UserUpdateRequestDto;
 import com.elitywebstore.model.response.UserResponseDto;
 import com.elitywebstore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,25 +22,6 @@ public class UserService {
 
     @Autowired
     ModelMapper modelMapper;
-
-    public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
-
-        UserDetails userDetails = UserDetails.builder()
-                .firstName(signUpRequestDto.getFirstName())
-                .lastName(signUpRequestDto.getLastName())
-                .phoneNumber(signUpRequestDto.getPhoneNumber())
-                .build();
-
-        User user = User.builder()
-                .email(signUpRequestDto.getEmail())
-                .password(signUpRequestDto.getPassword())
-                .details(userDetails)
-                .build();
-
-        userRepository.save(user);
-
-        log.info("User created: {}", user );
-    }
 
     public List<UserResponseDto> listAllUsers() {
         return userRepository.findAll().stream()
@@ -75,10 +50,24 @@ public class UserService {
         user.getDetails().setLastName(userUpdateRequestDto.getLastName());
         user.getDetails().setPhoneNumber(userUpdateRequestDto.getPhoneNumber());
 
-        userRepository.save(user);
+        save(user);
     }
 
     public void deleteById(Long id) {
         userRepository.deleteById(id);     // soft delete?
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public String getTokenByUserEmail(String email){
+        return userRepository.getByEmail(email)
+                .orElseThrow(()->new EntityNotFoundException())
+                .getActiveToken();
+    }
+
+    public void save(User user){
+        log.info("User {} saved", user.getId());
     }
 }

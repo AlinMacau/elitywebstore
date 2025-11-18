@@ -20,7 +20,7 @@ public class CartController {
         cartService.updateCart(updateCartDto);
     }
 
-    @GetMapping(ApiEndpointConstants.GET_BY_ID)
+    @GetMapping(ApiEndpointConstants.BY_ID)
     public CartResponseDto getCartById(@PathVariable Long id){
 
         return cartService.getDtoById(id);
