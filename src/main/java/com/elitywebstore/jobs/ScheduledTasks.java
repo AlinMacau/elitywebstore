@@ -25,7 +25,6 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "1 5 * * * *")
     public void reportCurrentTime() {
-//        log.info("The time is now {}", dateFormat.format(new Date()));
         log.info("Approved {} new orders" , orderService.approveNewOrders());
     }
 }

@@ -40,7 +40,8 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 Claims claims = Jwts.parser().setSigningKey(secretConfig.getSecretKey().getBytes()).parseClaimsJws(token).getBody();
                 String email = claims.getSubject();
-                if(email != null && SecurityContextHolder.getContext().getAuthentication() == null && userService.existsByEmail(email)){
+                if(email != null && SecurityContextHolder.getContext().getAuthentication() == null
+                        && userService.existsByEmail(email) && token.equals(userService.getTokenByUserEmail(email))){
                     UsernamePasswordAuthenticationToken u = new UsernamePasswordAuthenticationToken(email, null, null);
                     SecurityContextHolder.getContext().setAuthentication(u);
                 }

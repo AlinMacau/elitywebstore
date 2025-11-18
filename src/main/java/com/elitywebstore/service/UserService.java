@@ -1,36 +1,16 @@
 package com.elitywebstore.service;
 
-import com.elitywebstore.config.JwtFilter;
-import com.elitywebstore.config.SecretConfig;
-import com.elitywebstore.entities.Address;
 import com.elitywebstore.entities.User;
-import com.elitywebstore.entities.UserDetails;
-import com.elitywebstore.model.request.SignUpRequestDto;
 import com.elitywebstore.model.request.UserUpdateRequestDto;
 import com.elitywebstore.model.response.UserResponseDto;
 import com.elitywebstore.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,31 +22,6 @@ public class UserService {
 
     @Autowired
     ModelMapper modelMapper;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    SecretConfig secretConfig;
-
-    public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
-
-        UserDetails userDetails = UserDetails.builder()
-                .firstName(signUpRequestDto.getFirstName())
-                .lastName(signUpRequestDto.getLastName())
-                .phoneNumber(signUpRequestDto.getPhoneNumber())
-                .build();
-
-        User user = User.builder()
-                .email(signUpRequestDto.getEmail())
-                .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
-                .details(userDetails)
-                .build();
-
-        userRepository.save(user);
-
-        log.info("User created: {}", user );
-    }
 
     public List<UserResponseDto> listAllUsers() {
         return userRepository.findAll().stream()
@@ -95,29 +50,24 @@ public class UserService {
         user.getDetails().setLastName(userUpdateRequestDto.getLastName());
         user.getDetails().setPhoneNumber(userUpdateRequestDto.getPhoneNumber());
 
-        userRepository.save(user);
+        save(user);
     }
 
     public void deleteById(Long id) {
         userRepository.deleteById(id);     // soft delete?
     }
 
-    public String loginUser(@Valid SignUpRequestDto signUpRequestDto) {
-        User user = userRepository.getByEmail(signUpRequestDto.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException());
-
-        if(passwordEncoder.matches(signUpRequestDto.getPassword(), user.getPassword())){
-            return Jwts.builder()
-                    .setSubject(user.getEmail())
-                    .setIssuedAt(new Date())
-                    .setExpiration(Date.from(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
-                    .signWith(SignatureAlgorithm.HS256, secretConfig.getSecretKey().getBytes())
-                    .compact();
-        }
-        return "Invalid Credentials";
-    }
-
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public String getTokenByUserEmail(String email){
+        return userRepository.getByEmail(email)
+                .orElseThrow(()->new EntityNotFoundException())
+                .getActiveToken();
+    }
+
+    public void save(User user){
+        log.info("User {} saved", user.getId());
     }
 }

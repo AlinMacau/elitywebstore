@@ -7,8 +7,9 @@ public class ApiEndpointConstants {
 
 
     public static final String BASE_USERS_API = BASE_API_V1 + "/users";
-    public static final String USERS_SIGNUP = "/signup";
-    public static final String USERS_LOGIN = "/login";
+    public static final String USERS_SIGNUP = BASE_USERS_API + "/signup";
+    public static final String USERS_LOGIN = BASE_USERS_API + "/login";
+    public static final String TOKENS_INVALIDATE = BASE_API_V1 + "/tokens/invalidate";
 
 
     public static final String BASE_CARTS_API = BASE_API_V1 + "/carts";
