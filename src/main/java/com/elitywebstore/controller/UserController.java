@@ -6,17 +6,18 @@ import com.elitywebstore.model.response.UserResponseDto;
 import com.elitywebstore.model.request.UserUpdateRequestDto;
 import com.elitywebstore.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(ApiEndpointConstants.BASE_USERS_API)
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping()
     public List<UserResponseDto> listAllUsers(){

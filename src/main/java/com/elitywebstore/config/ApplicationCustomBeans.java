@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class ApplicationCustomBeans {
@@ -26,5 +27,10 @@ public class ApplicationCustomBeans {
         }));
 
         return mapper;
+    }
+
+    @Bean
+    public RestTemplate createRestTemplateInstance(){
+        return new RestTemplate();
     }
 }

@@ -6,16 +6,17 @@ import com.elitywebstore.model.request.AddressUpdateRequestDto;
 import com.elitywebstore.model.response.AddressResponseDto;
 import com.elitywebstore.service.AddressService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(ApiEndpointConstants.BASE_ADDRESSES_API)
 public class AddressController {
 
-    @Autowired
     private AddressService addressService;
 
     @PostMapping

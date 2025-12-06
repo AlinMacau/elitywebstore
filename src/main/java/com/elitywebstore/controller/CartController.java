@@ -5,15 +5,16 @@ import com.elitywebstore.model.request.UpdateCartDto;
 import com.elitywebstore.model.response.CartResponseDto;
 import com.elitywebstore.service.CartService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(ApiEndpointConstants.BASE_CARTS_API)
 public class CartController {
 
-    @Autowired
-    private CartService cartService;
+    private final CartService cartService;
 
     @PutMapping()
     public void updateCart(@Valid @RequestBody UpdateCartDto updateCartDto){

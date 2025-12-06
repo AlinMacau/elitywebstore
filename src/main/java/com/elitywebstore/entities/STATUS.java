@@ -4,5 +4,6 @@ public enum STATUS {
     PENDING,
     CANCELLED,
     ACCEPTED,
+    PAID,
     SENT
 }

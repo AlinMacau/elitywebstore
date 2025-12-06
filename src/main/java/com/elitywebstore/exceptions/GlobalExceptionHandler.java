@@ -1,4 +1,4 @@
-package com.elitywebstore.config;
+package com.elitywebstore.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

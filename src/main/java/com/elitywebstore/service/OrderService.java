@@ -4,29 +4,27 @@ import com.elitywebstore.entities.Cart;
 import com.elitywebstore.entities.Order;
 import com.elitywebstore.entities.Product;
 import com.elitywebstore.repository.OrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.elitywebstore.entities.STATUS.PENDING;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
+
 public class OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private CartService cartService;
-
-    @Autowired
-    private ProductService productService;
+    private final  OrderRepository orderRepository;
+    private final CartService cartService;
+    private final ProductService productService;
 
     public Order createOrder(Long cartId) {
         Cart cart = cartService.getById(cartId);
@@ -71,5 +69,17 @@ public class OrderService {
     @Transactional
     public Integer approveNewOrders(){
         return orderRepository.approveNewOrders();
+    }
+
+    public Order getOrder(Long orderId){
+        return orderRepository.findById(orderId)
+                .orElseThrow(()->new EntityNotFoundException());
+    }
+
+    public void save(Order order) {
+        orderRepository.save(order);
+
+        log.info("Order {} saved", order.getId());
+
     }
 }

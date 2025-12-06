@@ -5,14 +5,15 @@ import com.elitywebstore.model.request.SignUpRequestDto;
 import com.elitywebstore.service.AuthService;
 import com.elitywebstore.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     @PostMapping(ApiEndpointConstants.USERS_SIGNUP)
     public void signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto){

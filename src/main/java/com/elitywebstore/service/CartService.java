@@ -7,35 +7,23 @@ import com.elitywebstore.exceptions.StockException;
 import com.elitywebstore.model.request.UpdateCartDto;
 import com.elitywebstore.model.response.CartResponseDto;
 import com.elitywebstore.repository.CartRepository;
-import com.elitywebstore.repository.ProductRepository;
-import com.elitywebstore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CartService {
-        @Autowired
-        private CartRepository cartRepository;
 
-        @Autowired
-        private UserRepository userRepository;
-
-        @Autowired
-        private ProductRepository productRepository;
-
-        @Autowired
-        private UserService userService;
-
-        @Autowired
-        private ProductService productService;
-    @Autowired
-    private ModelMapper modelMapper;
+        private final CartRepository cartRepository;
+        private final UserService userService;
+        private final ProductService productService;
+        private final ModelMapper modelMapper;
 
     public void updateCart(UpdateCartDto updateCartDto) {
         User user = userService.getById(updateCartDto.getUserId());

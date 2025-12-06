@@ -3,14 +3,14 @@ package com.elitywebstore.service;
 import com.elitywebstore.entities.Product;
 import com.elitywebstore.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-    @Autowired
-    ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
 
     public Product getById(Long id) {
