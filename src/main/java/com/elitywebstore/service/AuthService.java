@@ -9,8 +9,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,19 +20,13 @@ import java.util.Date;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private SecretConfig secretConfig;
-
-    @Autowired
-    private UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final SecretConfig secretConfig;
+    private final UserService userService;
 
     public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
 

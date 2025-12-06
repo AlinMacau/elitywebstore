@@ -1,6 +1,7 @@
 package com.elitywebstore.controller;
 
 import com.elitywebstore.config.ApiEndpointConstants;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(ApiEndpointConstants.BASE_API_V1)
 public class ApiEndpointsController {
 

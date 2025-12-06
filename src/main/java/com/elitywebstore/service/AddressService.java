@@ -7,24 +7,20 @@ import com.elitywebstore.model.response.AddressResponseDto;
 import com.elitywebstore.repository.AddressRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AddressService {
 
-    @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final AddressRepository addressRepository;
+    private final UserService userService;
+    private final ModelMapper modelMapper;
 
     public void createAddress(AddressRequestDto addressRequestDto) {
         Address newAddress = Address.builder()

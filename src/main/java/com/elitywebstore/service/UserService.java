@@ -5,9 +5,9 @@ import com.elitywebstore.model.request.UserUpdateRequestDto;
 import com.elitywebstore.model.response.UserResponseDto;
 import com.elitywebstore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +15,11 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     public List<UserResponseDto> listAllUsers() {
         return userRepository.findAll().stream()
@@ -68,6 +66,7 @@ public class UserService {
     }
 
     public void save(User user){
+        userRepository.save(user);
         log.info("User {} saved", user.getId());
     }
 }
