@@ -1,12 +1,11 @@
 package com.elitywebstore.controller;
 
 import com.elitywebstore.config.ApiEndpointConstants;
+import com.elitywebstore.model.request.LoginRequestDto;
 import com.elitywebstore.model.request.SignUpRequestDto;
 import com.elitywebstore.service.AuthService;
-import com.elitywebstore.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,8 +20,8 @@ public class AuthController {
     }
 
     @PostMapping(ApiEndpointConstants.USERS_LOGIN)
-    public String login(@Valid @RequestBody SignUpRequestDto signUpRequestDto){
-        return authService.loginUser(signUpRequestDto);
+    public String login(@Valid @RequestBody LoginRequestDto loginRequestDto){
+        return authService.loginUser(loginRequestDto);
     }
 
     @PutMapping(ApiEndpointConstants.TOKENS_INVALIDATE)
@@ -32,7 +31,6 @@ public class AuthController {
         }else {
             authService.invalidateAllTokens();
         }
-
     }
 
 }

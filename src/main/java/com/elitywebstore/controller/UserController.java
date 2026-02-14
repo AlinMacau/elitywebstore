@@ -1,13 +1,11 @@
 package com.elitywebstore.controller;
 
 import com.elitywebstore.config.ApiEndpointConstants;
-import com.elitywebstore.model.request.SignUpRequestDto;
-import com.elitywebstore.model.response.UserResponseDto;
 import com.elitywebstore.model.request.UserUpdateRequestDto;
+import com.elitywebstore.model.response.UserResponseDto;
 import com.elitywebstore.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +22,7 @@ public class UserController {
         return userService.listAllUsers();
     }
 
-    @GetMapping(ApiEndpointConstants.BY_ID)
+    @GetMapping("/details/{id}")
     public UserResponseDto getById(@PathVariable Long id){
         return userService.getDtoById(id);
     }
@@ -34,10 +32,8 @@ public class UserController {
         userService.updateUser(userUpdateRequestDto);
     }
 
-    @DeleteMapping(ApiEndpointConstants.BY_ID)
+    @DeleteMapping("/details/{id}")
     public void deleteById(@PathVariable Long id){
         userService.deleteById(id);
     }
-
-
 }

@@ -32,6 +32,11 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
+    public User getByEmail(String email) {
+        return userRepository.getByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+    }
+
     public UserResponseDto getDtoById(Long id) {
         User user = getById(id);
 

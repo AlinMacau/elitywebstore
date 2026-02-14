@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping(ApiEndpointConstants.BASE_ADDRESSES_API)
 public class AddressController {
 
-    private AddressService addressService;
+    private final AddressService addressService;
 
     @PostMapping
     public void createAddress(@Valid @RequestBody AddressRequestDto addressRequestDto){
