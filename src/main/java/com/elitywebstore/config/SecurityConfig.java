@@ -20,23 +20,26 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtFilter jwtFilter;
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth-> auth
-                        .requestMatchers(ApiEndpointConstants.USERS_SIGNUP, ApiEndpointConstants.USERS_LOGIN, ApiEndpointConstants.TOKENS_INVALIDATE)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
-                ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        return httpSecurity.build();
-    }
-
+      private final JwtFilter jwtFilter;
+            @Bean
+            public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+                httpSecurity
+                        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                        .csrf(csrf -> csrf.disable())
+                        .authorizeHttpRequests(auth-> auth
+                                .requestMatchers(
+                                    ApiEndpointConstants.USERS_SIGNUP, 
+                                    ApiEndpointConstants.USERS_LOGIN, 
+                                    ApiEndpointConstants.TOKENS_INVALIDATE,
+                                    ApiEndpointConstants.BASE_API_V1 + "/categories/**",
+                                    ApiEndpointConstants.BASE_API_V1 + "/products/**"
+                                )
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+                        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                return httpSecurity.build();
+            }
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

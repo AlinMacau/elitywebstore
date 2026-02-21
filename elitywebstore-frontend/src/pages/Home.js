@@ -1,62 +1,106 @@
-import React from 'react';
-import { Box, Typography, Button as MuiButton, Container } from '@mui/material';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useEffect, useState } from 'react';
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
+  Grid,
+  Paper,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import Navbar from '../components/common/Navbar';
+import Footer from '../components/common/Footer';
+import ProductCard from '../components/product/ProductCard';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import productService from '../services/productService';
 
 const Home = () => {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  useEffect(() => {
+    fetchFeaturedProducts();
+  }, []);
+
+  const fetchFeaturedProducts = async () => {
+    try {
+      const products = await productService.getFeaturedProducts();
+      setFeaturedProducts(products);
+    } catch (error) {
+      console.error('Error fetching featured products:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-      <Box
+    <Box display="flex" flexDirection="column" minHeight="100vh">
+      <Navbar />
+      
+      {/* Hero Section */}
+      <Paper
         sx={{
-          background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)',
+          backgroundColor: '#ff6b35',
           color: '#fff',
-          py: 3,
-          px: 2,
+          py: 8,
+          mb: 4,
+          borderRadius: 0,
         }}
       >
         <Container maxWidth="lg">
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <ShoppingBagIcon sx={{ fontSize: 32, mr: 1 }} />
-              <Typography variant="h5" fontWeight={700}>
-                Elity Store
-              </Typography>
-            </Box>
-            <MuiButton
-              variant="outlined"
-              onClick={handleLogout}
-              sx={{
-                color: '#fff',
-                borderColor: '#fff',
-                '&:hover': {
-                  borderColor: '#fff',
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                },
-              }}
-            >
-              Logout
-            </MuiButton>
-          </Box>
+          <Typography variant="h2" component="h1" gutterBottom fontWeight="bold">
+            Welcome to ElityStore
+          </Typography>
+          <Typography variant="h5" paragraph>
+            Discover amazing products at unbeatable prices
+          </Typography>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => navigate('/products')}
+            sx={{
+              backgroundColor: '#fff',
+              color: '#ff6b35',
+              '&:hover': { backgroundColor: '#f5f5f5' },
+              mt: 2,
+            }}
+          >
+            Shop Now
+          </Button>
         </Container>
-      </Box>
+      </Paper>
 
-      <Container maxWidth="lg" sx={{ py: 6 }}>
-        <Typography variant="h4" fontWeight={600} gutterBottom>
-          Welcome, {user?.email || 'User'}!
+      {/* Featured Products */}
+      <Container maxWidth="lg" sx={{ mb: 8 }}>
+        <Typography variant="h4" gutterBottom fontWeight="bold" mb={3}>
+          Featured Products
         </Typography>
-        <Typography variant="body1" color="text.secondary">
-          You are now logged in to Elity Store. More features coming soon!
-        </Typography>
+        
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          <Grid container spacing={3}>
+            {featuredProducts.map((product) => (
+              <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
+                <ProductCard product={product} />
+              </Grid>
+            ))}
+          </Grid>
+        )}
+
+        <Box textAlign="center" mt={4}>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => navigate('/products')}
+          >
+            View All Products
+          </Button>
+        </Box>
       </Container>
+
+      <Footer />
     </Box>
   );
 };

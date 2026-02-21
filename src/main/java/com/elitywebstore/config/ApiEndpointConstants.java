@@ -18,4 +18,6 @@ public class ApiEndpointConstants {
 
     public static final String BASE_ADDRESSES_API = BASE_API_V1 + "/addresses";
     public static final String ADDRESSES_GET_ALL_BY_USER_ID = "/user/{userId}";
+
+    public static final String BASE_PRODUCTS_API = BASE_API_V1 + "/products";
 }

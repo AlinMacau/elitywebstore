@@ -1,5 +1,6 @@
 package com.elitywebstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,6 @@ public class Category {
     private String description;
 
     @OneToMany(mappedBy = "category")
-    private List <Product> products;//db
-
+    @JsonIgnore
+    private List<Product> products;
 }

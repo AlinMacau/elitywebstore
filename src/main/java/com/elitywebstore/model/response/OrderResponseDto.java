@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,8 +17,14 @@ public class OrderResponseDto {
 
     private Long id;
 
+    private LocalDate date;
+
     private STATUS status;
 
     private Double price;
+
+    private List<ProductResponseDto> products;
+
+    private AddressResponseDto deliveryAddress;
 
 }

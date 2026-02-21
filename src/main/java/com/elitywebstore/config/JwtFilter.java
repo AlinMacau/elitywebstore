@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     public static final String BEARER = "Bearer";
@@ -32,18 +34,27 @@ public class JwtFilter extends OncePerRequestFilter {
         if(authHeader != null && authHeader.startsWith(BEARER)){
             String token = authHeader.substring(7);
             try {
-                Claims claims = Jwts.parser().setSigningKey(secretConfig.getSecretKey().getBytes()).parseClaimsJws(token).getBody();
+                Claims claims = Jwts.parser()
+                        .setSigningKey(secretConfig.getSecretKey().getBytes())
+                        .parseClaimsJws(token)
+                        .getBody();
+                        
                 String email = claims.getSubject();
-                if(email != null && SecurityContextHolder.getContext().getAuthentication() == null
-                        && userService.existsByEmail(email) && token.equals(userService.getTokenByUserEmail(email))){
-                    UsernamePasswordAuthenticationToken u = new UsernamePasswordAuthenticationToken(email, null, null);
-                    SecurityContextHolder.getContext().setAuthentication(u);
+                
+                if(email != null 
+                    && SecurityContextHolder.getContext().getAuthentication() == null
+                    && userService.existsByEmail(email) 
+                    && token.equals(userService.getTokenByUserEmail(email))){
+                    
+                    UsernamePasswordAuthenticationToken auth = 
+                        new UsernamePasswordAuthenticationToken(email, null, null);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
                 }
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (Exception e) {
+                // Log the error but don't block the request
+                log.warn("JWT validation failed: {}", e.getMessage());
             }
         }
         filterChain.doFilter(request, response);
     }
-
 }

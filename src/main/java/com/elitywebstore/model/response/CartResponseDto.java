@@ -15,6 +15,9 @@ import java.util.List;
 @Builder
 public class CartResponseDto {
 
+    private Long id;
+
+    @Builder.Default
     private List<ProductResponseDto> products = new ArrayList<>();
 
     private Double productsPrice;

@@ -1,16 +1,14 @@
 package com.elitywebstore.controller;
 
-import com.elitywebstore.client.PaymentClient;
 import com.elitywebstore.config.ApiEndpointConstants;
+import com.elitywebstore.model.request.OrderRequestDto;
 import com.elitywebstore.model.response.OrderResponseDto;
 import com.elitywebstore.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,16 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
-    private final PaymentClient paymentClient;
 
-    @PostMapping("/{cartId}")
-    public void createOrder(@Valid @PathVariable Long cartId){
-        orderService.createOrder(cartId);
+    @PostMapping
+    public OrderResponseDto createOrder(@Valid @RequestBody OrderRequestDto orderRequestDto) {
+        return orderService.createOrder(orderRequestDto);
     }
 
-    @PostMapping("/{orderId}/pay")
-    public OrderResponseDto payOrder(@PathVariable Long orderId){
-        return paymentClient.pay(orderId);
+    @GetMapping("/user/{userId}")
+    public List<OrderResponseDto> getOrdersByUserId(@PathVariable Long userId) {
+        return orderService.getOrdersByUserId(userId);
     }
 
+    @GetMapping(ApiEndpointConstants.BY_ID)
+    public OrderResponseDto getOrderById(@PathVariable Long id) {
+        return orderService.getOrderById(id);
+    }
 }
