@@ -3,9 +3,6 @@ package com.elitywebstore.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "user")
 @Data
@@ -13,22 +10,25 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class User {
-    @GeneratedValue
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String password;
 
+    @Column(unique = true, nullable = false)
     private String email;
 
     private String activeToken;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private ROLE role = ROLE.CUSTOMER;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "details_id", referencedColumnName = "id")
     private UserDetails details;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Order> orders;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cart_id", referencedColumnName = "id")

@@ -28,4 +28,5 @@ public class Address {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userdetails_id")
     private UserDetails userDetails;//db
+
 }

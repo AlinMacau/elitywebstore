@@ -14,9 +14,18 @@ const ProtectedRoute = ({ children }) => {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
+          background: 'linear-gradient(135deg, #FAF5FC 0%, #F5E6F8 100%)',
         }}
       >
-        <CircularProgress size={60} sx={{ color: '#ff6b35' }} />
+        <CircularProgress 
+          size={60} 
+          sx={{ 
+            color: '#E91E8C',
+            '& .MuiCircularProgress-circle': {
+              strokeLinecap: 'round',
+            },
+          }} 
+        />
       </Box>
     );
   }

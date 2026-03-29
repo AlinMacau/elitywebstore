@@ -20,5 +20,9 @@ public class ProductResponseDto {
 
     private Integer stock;
 
+    private Long categoryId;
+
     private String categoryName;
+
+    private Boolean active;
 }

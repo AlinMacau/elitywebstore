@@ -33,3 +33,6 @@ build/
 .vscode/
 ./elitywebstore-frontend/node_modules/*
 deploy.ps1
+# Secrets - never commit
+src/main/resources/application-local.properties
+.env

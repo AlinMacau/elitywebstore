@@ -17,8 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class Order {
-    @GeneratedValue
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate date;
@@ -37,6 +37,7 @@ public class Order {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
+    @Builder.Default
     private List<Product> products = new ArrayList<>();
 
 

@@ -26,5 +26,10 @@ public class OrderResponseDto {
     private List<ProductResponseDto> products;
 
     private AddressResponseDto deliveryAddress;
+    
+    // New fields for admin view
+    private Long userId;
+    private String userEmail;
+    private String userName;
 
 }

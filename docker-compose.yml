@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: elitywebstore-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SECRET_KEY=${SECRET_KEY}
+    env_file:
+      - .env
+    networks:
+      - elitywebstore-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./elitywebstore-frontend
+      dockerfile: Dockerfile
+    container_name: elitywebstore-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - elitywebstore-network
+    restart: unless-stopped
+
+networks:
+  elitywebstore-network:
+    driver: bridge

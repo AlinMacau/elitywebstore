@@ -16,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class Product {
-    @GeneratedValue
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -28,11 +28,16 @@ public class Product {
 
     private Integer stock;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean active = true;
+
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Order> orders = new ArrayList<>();
 
 }

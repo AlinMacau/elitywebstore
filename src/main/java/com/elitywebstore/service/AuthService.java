@@ -1,78 +1,107 @@
 package com.elitywebstore.service;
 
-import com.elitywebstore.config.SecretConfig;
+import com.elitywebstore.entities.ROLE;
 import com.elitywebstore.entities.User;
 import com.elitywebstore.entities.UserDetails;
 import com.elitywebstore.model.request.LoginRequestDto;
 import com.elitywebstore.model.request.SignUpRequestDto;
+import com.elitywebstore.model.response.LoginResponseDto;
 import com.elitywebstore.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
 
-        private final PasswordEncoder passwordEncoder;
-        private final UserRepository userRepository;
-        private final SecretConfig secretConfig;
-        private final UserService userService;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
-        public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
+    public void createUser(@Valid SignUpRequestDto signUpRequestDto) {
+        log.info("Creating new user with email: {}", signUpRequestDto.getEmail());
 
-            UserDetails userDetails = UserDetails.builder()
-                    .firstName(signUpRequestDto.getFirstName())
-                    .lastName(signUpRequestDto.getLastName())
-                    .phoneNumber(signUpRequestDto.getPhoneNumber())
-                    .build();
+        UserDetails userDetails = UserDetails.builder()
+                .firstName(signUpRequestDto.getFirstName())
+                .lastName(signUpRequestDto.getLastName())
+                .phoneNumber(signUpRequestDto.getPhoneNumber())
+                .build();
 
-            User user = User.builder()
-                    .email(signUpRequestDto.getEmail())
-                    .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
-                    .details(userDetails)
-                    .build();
+        User user = User.builder()
+                .email(signUpRequestDto.getEmail())
+                .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
+                .details(userDetails)
+                .role(ROLE.CUSTOMER)
+                .build();
 
-            userService.save(user);
+        userService.save(user);
+        log.info("User created successfully with id: {} and role: {}", user.getId(), user.getRole());
+    }
 
-            log.info("User created: {}", user);
+    public LoginResponseDto loginUser(@Valid LoginRequestDto loginRequestDto) {
+        log.info("Login attempt for user: {}", loginRequestDto.getEmail());
+        User user = userService.getByEmail(loginRequestDto.getEmail());
+
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            log.error("Invalid credentials for user: {}", loginRequestDto.getEmail());
+            throw new RuntimeException("Invalid credentials");
         }
 
-        public String loginUser(@Valid LoginRequestDto loginRequestDto) {
-            User user = userService.getByEmail(loginRequestDto.getEmail());
+        String token = jwtService.generateToken(user.getEmail(), user.getId(), user.getRole());
 
-            if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-                throw new RuntimeException("Invalid credentials");
-            }
+        user.setActiveToken(token);
+        userService.save(user);
 
-            String token = Jwts.builder()
-                    .setSubject(user.getEmail())
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 hours
-                    .signWith(SignatureAlgorithm.HS512, secretConfig.getSecretKey())
-                    .compact();
+        log.info("User logged in successfully: {} with userId: {} and role: {}", 
+                user.getEmail(), user.getId(), user.getRole());
+        
+        return LoginResponseDto.builder()
+                .token(token)
+                .userId(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
+    }
 
-            user.setActiveToken(token);
-            userService.save(user);
+    public void invalidateUserToken(Long userId) {
+        log.info("Invalidating token for user: {}", userId);
+        User user = userService.getById(userId);
+        user.setActiveToken(null);
+        userService.save(user);
+        log.info("Token invalidated successfully for user: {}", userId);
+    }
 
-            log.info("User logged in: {}", user.getEmail());
-            return token;
-        }
+    public void createAdminUser(String email, String password, String firstName, String lastName) {
+        log.info("Creating admin user with email: {}", email);
 
-        public void invalidateUserToken(Long userId) {
-            User user = userService.getById(userId);
+        UserDetails userDetails = UserDetails.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .phoneNumber("N/A")
+                .build();
+
+        User user = User.builder()
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .details(userDetails)
+                .role(ROLE.ADMIN)
+                .build();
+
+        userService.save(user);
+        log.info("Admin user created successfully with id: {}", user.getId());
+    }
+
+    public void invalidateAllTokens() {
+        log.info("Invalidating all user tokens");
+        userRepository.findAll().forEach(user -> {
             user.setActiveToken(null);
-            userService.save(user);
-        }
-
-        public void invalidateAllTokens() {
-            userRepository.invalidateAllTokens();
-        }
+            userRepository.save(user);
+        });
+        log.info("All tokens invalidated successfully");
+    }
 }
