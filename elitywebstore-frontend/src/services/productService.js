@@ -21,6 +21,22 @@ const productService = {
     const response = await api.get('/products/featured');
     return response.data;
   },
+
+  // Admin methods
+  createProduct: async (productData) => {
+    const response = await api.post('/admin/products', productData);
+    return response.data;
+  },
+
+  updateProduct: async (productData) => {
+    const response = await api.put('/admin/products', productData);
+    return response.data;
+  },
+
+  deleteProduct: async (id) => {
+    const response = await api.delete(`/admin/products/${id}`);
+    return response.data;
+  },
 };
 
 export default productService;

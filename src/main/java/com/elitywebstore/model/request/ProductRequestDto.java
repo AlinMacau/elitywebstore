@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 @Data
 @AllArgsConstructor
@@ -30,4 +31,7 @@ public class ProductRequestDto {
     
     @NotNull(message = "Category ID is required")
     private Long categoryId;
+
+    @URL(message = "Image URL must be a valid URL")
+    private String imageUrl;
 }

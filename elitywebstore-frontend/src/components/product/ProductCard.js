@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
+const DEFAULT_IMAGE = '/placeholder-product.png';
+
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -23,6 +25,10 @@ const ProductCard = ({ product }) => {
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
+  };
+
+  const handleImageError = (e) => {
+    e.target.src = DEFAULT_IMAGE;
   };
 
   return (
@@ -48,8 +54,9 @@ const ProductCard = ({ product }) => {
         <CardMedia
           component="img"
           height="200"
-          image={product.imageUrl || '/placeholder-product.png'}
+          image={product.imageUrl || DEFAULT_IMAGE}
           alt={product.name}
+          onError={handleImageError}
           sx={{ 
             objectFit: 'cover',
             transition: 'transform 0.3s ease',

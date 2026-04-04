@@ -23,6 +23,9 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
+    // Default placeholder image for products without images
+    private static final String DEFAULT_PRODUCT_IMAGE = "https://via.placeholder.com/300x300?text=No+Image";
+
     // ==================== PUBLIC METHODS ====================
 
     public List<ProductResponseDto> getAllProducts(String search, Long categoryId, Double minPrice, Double maxPrice) {
@@ -81,6 +84,7 @@ public class ProductService {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .stock(request.getStock())
+                .imageUrl(request.getImageUrl())
                 .category(category)
                 .active(true)
                 .build();
@@ -112,6 +116,9 @@ public class ProductService {
         if (request.getCategoryId() != null) {
             Category category = categoryService.getById(request.getCategoryId());
             product.setCategory(category);
+        }
+        if (request.getImageUrl() != null) {
+            product.setImageUrl(request.getImageUrl());
         }
         
         Product updatedProduct = productRepository.save(product);
@@ -182,6 +189,7 @@ public class ProductService {
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
         dto.setStock(product.getStock());
+        dto.setImageUrl(product.getImageUrl() != null ? product.getImageUrl() : DEFAULT_PRODUCT_IMAGE);
         
         if (product.getCategory() != null) {
             dto.setCategoryId(product.getCategory().getId());

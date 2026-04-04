@@ -28,6 +28,9 @@ public class Product {
 
     private Integer stock;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(nullable = false)
     @Builder.Default
     private Boolean active = true;

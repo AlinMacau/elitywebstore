@@ -20,6 +20,8 @@ public class ProductResponseDto {
 
     private Integer stock;
 
+    private String imageUrl;
+
     private Long categoryId;
 
     private String categoryName;

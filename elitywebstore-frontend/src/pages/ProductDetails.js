@@ -16,12 +16,15 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import productService from '../services/productService';
 import { useCart } from '../contexts/CartContext';
 
+const DEFAULT_IMAGE = '/placeholder-product.png';
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     fetchProduct();
@@ -31,6 +34,7 @@ const ProductDetails = () => {
     try {
       const data = await productService.getProductById(id);
       setProduct(data);
+      setImageError(false);
     } catch (error) {
       console.error('Error fetching product:', error);
     } finally {
@@ -45,6 +49,10 @@ const ProductDetails = () => {
     } catch (error) {
       console.error('Failed to add to cart:', error);
     }
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
   };
 
   if (loading) {
@@ -69,6 +77,8 @@ const ProductDetails = () => {
     );
   }
 
+  const imageUrl = imageError || !product.imageUrl ? DEFAULT_IMAGE : product.imageUrl;
+
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
       <Navbar />
@@ -84,11 +94,26 @@ const ProductDetails = () => {
 
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 2 }}>
+            <Paper 
+              sx={{ 
+                p: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: 400,
+                backgroundColor: '#fafafa',
+              }}
+            >
               <img
-                src={`https://via.placeholder.com/500?text=${product.name}`}
+                src={imageUrl}
                 alt={product.name}
-                style={{ width: '100%', borderRadius: '8px' }}
+                onError={handleImageError}
+                style={{ 
+                  maxWidth: '100%', 
+                  maxHeight: '500px',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
+                }}
               />
             </Paper>
           </Grid>
@@ -99,23 +124,41 @@ const ProductDetails = () => {
             </Typography>
 
             {product.categoryName && (
-              <Chip label={product.categoryName} sx={{ mb: 2 }} />
+              <Chip 
+                label={product.categoryName} 
+                sx={{ 
+                  mb: 2,
+                  backgroundColor: '#35A9F6',
+                  color: '#fff',
+                }} 
+              />
             )}
 
-            <Typography variant="h5" color="primary" gutterBottom fontWeight="bold">
+            <Typography 
+              variant="h5" 
+              gutterBottom 
+              fontWeight="bold"
+              sx={{ color: '#35A9F6' }}
+            >
               ${product.price?.toFixed(2)}
             </Typography>
 
             <Box my={3}>
               {product.stock > 0 ? (
-                <Chip label={`${product.stock} in stock`} color="success" />
+                <Chip 
+                  label={`${product.stock} in stock`} 
+                  color="success" 
+                />
               ) : (
-                <Chip label="Out of Stock" color="error" />
+                <Chip 
+                  label="Out of Stock" 
+                  color="error" 
+                />
               )}
             </Box>
 
-            <Typography variant="body1" paragraph>
-              {product.description}
+            <Typography variant="body1" paragraph sx={{ color: '#666' }}>
+              {product.description || 'No description available.'}
             </Typography>
 
             <Button
@@ -125,9 +168,11 @@ const ProductDetails = () => {
               onClick={handleAddToCart}
               disabled={product.stock === 0}
               sx={{
-                backgroundColor: '#ff6b35',
-                '&:hover': { backgroundColor: '#e55a2b' },
+                backgroundColor: '#DD438A',
+                '&:hover': { backgroundColor: '#B8306E' },
                 mt: 2,
+                py: 1.5,
+                px: 4,
               }}
             >
               Add to Cart
