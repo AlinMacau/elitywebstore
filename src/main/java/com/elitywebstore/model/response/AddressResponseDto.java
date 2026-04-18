@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 public class AddressResponseDto {
 
     private Long id;
-    private AddressType addressType;//billing/delivery
+    private AddressType addressType;
     private String county;
     private String city;
     private String street;
-
     private String postalCode;
-
+    private Boolean isDefault;
+    private Boolean active;
 }

@@ -29,6 +29,10 @@ import ProductManagement from './pages/admin/ProductManagement';
 import CategoryManagement from './pages/admin/CategoryManagement';
 import OrderManagement from './pages/admin/OrderManagement';
 import UserManagement from './pages/admin/UserManagement';
+
+// Admin Components
+import AdminOrderDetails from './components/admin/AdminOrderDetails';
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -112,6 +116,7 @@ function App() {
               <Route path="/admin/products" element={<AdminRoute><ProductManagement /></AdminRoute>} />
               <Route path="/admin/categories" element={<AdminRoute><CategoryManagement /></AdminRoute>} />
               <Route path="/admin/orders" element={<AdminRoute><OrderManagement /></AdminRoute>} />
+              <Route path="/admin/orders/:id" element={<AdminRoute><AdminOrderDetails /></AdminRoute>} />
               <Route path="/admin/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
             </Routes>
           </Router>

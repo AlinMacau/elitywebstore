@@ -10,36 +10,48 @@ echo "=========================================="
 echo "Building and Deploying Elity Webstore"
 echo "=========================================="
 
-# Step 1: Build frontend locally
-echo "[1/7] Building frontend locally..."
+# Step 1: Build backend locally
+echo "[1/8] Building backend locally..."
+./mvnw clean package -DskipTests
+if [ $? -ne 0 ]; then
+    echo "Backend build failed!"
+    exit 1
+fi
+
+# Step 2: Build frontend locally
+echo "[2/8] Building frontend locally..."
 cd elitywebstore-frontend
 npm run build
+if [ $? -ne 0 ]; then
+    echo "Frontend build failed!"
+    exit 1
+fi
 cd ..
 
-# Step 2: Create directories on server
-echo "[2/7] Creating directories on server..."
+# Step 3: Create directories on server
+echo "[3/8] Creating directories on server..."
 ssh -i "$SSH_KEY" "$EC2_USER@$EC2_IP" "mkdir -p $REMOTE_DIR/elitywebstore-frontend $REMOTE_DIR/target"
 
-# Step 3: Upload backend Dockerfile and JAR
-echo "[3/7] Uploading backend files..."
+# Step 4: Upload backend Dockerfile and JAR
+echo "[4/8] Uploading backend files..."
 scp -i "$SSH_KEY" Dockerfile "$EC2_USER@$EC2_IP:$REMOTE_DIR/"
 scp -i "$SSH_KEY" target/elitywebstore-0.0.1-SNAPSHOT.jar "$EC2_USER@$EC2_IP:$REMOTE_DIR/target/"
 
-# Step 4: Upload frontend build folder
-echo "[4/7] Uploading frontend build files..."
+# Step 5: Upload frontend build folder
+echo "[5/8] Uploading frontend build files..."
 scp -r -i "$SSH_KEY" elitywebstore-frontend/build "$EC2_USER@$EC2_IP:$REMOTE_DIR/elitywebstore-frontend/"
 
-# Step 5: Upload frontend config files
-echo "[5/7] Uploading frontend config files..."
+# Step 6: Upload frontend config files
+echo "[6/8] Uploading frontend config files..."
 scp -i "$SSH_KEY" elitywebstore-frontend/Dockerfile elitywebstore-frontend/nginx.conf "$EC2_USER@$EC2_IP:$REMOTE_DIR/elitywebstore-frontend/"
 
-# Step 6: Upload docker-compose and env files
-echo "[6/7] Uploading docker-compose and env files..."
+# Step 7: Upload docker-compose and env files
+echo "[7/8] Uploading docker-compose and env files..."
 scp -i "$SSH_KEY" docker-compose.yml "$EC2_USER@$EC2_IP:$REMOTE_DIR/"
 scp -i "$SSH_KEY" .env "$EC2_USER@$EC2_IP:$REMOTE_DIR/"
 
-# Step 7: Deploy on EC2
-echo "[7/7] Deploying on EC2..."
+# Step 8: Deploy on EC2
+echo "[8/8] Deploying on EC2..."
 ssh -i "$SSH_KEY" "$EC2_USER@$EC2_IP" "cd $REMOTE_DIR && docker-compose down && docker-compose up -d --build"
 
 echo "=========================================="

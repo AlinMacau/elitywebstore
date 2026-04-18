@@ -17,16 +17,22 @@ public class Address {
     @GeneratedValue
     private Long id;
 
-    private AddressType addressType;//billing/delivery
+    @Enumerated(EnumType.STRING)
+    private AddressType addressType; // BILLING / SHIPPING
 
     private String county;
     private String city;
     private String street;
-
     private String postalCode;
+
+    @Builder.Default
+    private Boolean isDefault = false;
+
+    @Builder.Default
+    private Boolean active = true;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userdetails_id")
-    private UserDetails userDetails;//db
+    private UserDetails userDetails;
 
 }

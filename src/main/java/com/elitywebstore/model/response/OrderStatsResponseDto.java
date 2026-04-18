@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class OrderStatsResponseDto {
     private Long totalOrders;
     private Long pendingOrders;
-    private Long acceptedOrders;
-    private Long paidOrders;
+    private Long processingOrders;
     private Long sentOrders;
+    private Long deliveredOrders;
     private Long cancelledOrders;
     private Double totalRevenue;
 }

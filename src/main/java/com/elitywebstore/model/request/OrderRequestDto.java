@@ -1,5 +1,7 @@
 package com.elitywebstore.model.request;
 
+import com.elitywebstore.entities.DeliveryMethod;
+import com.elitywebstore.entities.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +13,25 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class OrderRequestDto {
+
     @NotNull(message = "User ID is required")
     private Long userId;
+
+    @NotNull(message = "Shipping address ID is required")
+    private Long shippingAddressId;
+
+    private Long billingAddressId;
+
+    @Builder.Default
+    private Boolean billingSameAsShipping = true;
     
-    @NotNull(message = "Address ID is required")
-    private Long addressId;
+    // ==================== NEW: Delivery method ====================
+    
+    @NotNull(message = "Delivery method is required")
+    private DeliveryMethod deliveryMethod;
+    
+    // ==================== NEW: Payment method ====================
+    
+    @NotNull(message = "Payment method is required")
+    private PaymentMethod paymentMethod;
 }

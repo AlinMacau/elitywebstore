@@ -18,6 +18,35 @@ import { useCart } from '../contexts/CartContext';
 
 const DEFAULT_IMAGE = '/placeholder-product.png';
 
+// Threshold for "Low Stock" status
+const LOW_STOCK_THRESHOLD = 5;
+
+/**
+ * Converts numeric stock to availability display configuration.
+ * This hides exact stock numbers from public users.
+ */
+const getAvailabilityDisplay = (stock) => {
+  if (!stock || stock <= 0) {
+    return {
+      label: 'Out of Stock',
+      color: 'error',
+      canAddToCart: false,
+    };
+  } else if (stock <= LOW_STOCK_THRESHOLD) {
+    return {
+      label: 'Low Stock',
+      color: 'warning',
+      canAddToCart: true,
+    };
+  } else {
+    return {
+      label: 'In Stock',
+      color: 'success',
+      canAddToCart: true,
+    };
+  }
+};
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -78,6 +107,7 @@ const ProductDetails = () => {
   }
 
   const imageUrl = imageError || !product.imageUrl ? DEFAULT_IMAGE : product.imageUrl;
+  const availability = getAvailabilityDisplay(product.stock);
 
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
@@ -144,17 +174,10 @@ const ProductDetails = () => {
             </Typography>
 
             <Box my={3}>
-              {product.stock > 0 ? (
-                <Chip 
-                  label={`${product.stock} in stock`} 
-                  color="success" 
-                />
-              ) : (
-                <Chip 
-                  label="Out of Stock" 
-                  color="error" 
-                />
-              )}
+              <Chip 
+                label={availability.label}
+                color={availability.color}
+              />
             </Box>
 
             <Typography variant="body1" paragraph sx={{ color: '#666' }}>
@@ -166,7 +189,7 @@ const ProductDetails = () => {
               size="large"
               startIcon={<ShoppingCart />}
               onClick={handleAddToCart}
-              disabled={product.stock === 0}
+              disabled={!availability.canAddToCart}
               sx={{
                 backgroundColor: '#DD438A',
                 '&:hover': { backgroundColor: '#B8306E' },

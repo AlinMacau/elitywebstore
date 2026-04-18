@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -26,10 +27,6 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
 } from '@mui/material';
 import {
   Visibility as ViewIcon,
@@ -39,19 +36,15 @@ import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import adminOrderService from '../../services/adminOrderService';
-
-const ORDER_STATUSES = ['PENDING', 'ACCEPTED', 'PAID', 'SENT', 'CANCELLED'];
+import { ORDER_STATUSES, getOrderStatusColor, getOrderStatusLabel } from '../../constants/orderStatuses';
 
 const OrderManagement = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
-  
-  // View dialog state
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
   
   // Status update dialog state
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
@@ -94,13 +87,7 @@ const OrderManagement = () => {
   };
 
   const handleViewClick = (order) => {
-    setSelectedOrder(order);
-    setViewDialogOpen(true);
-  };
-
-  const handleViewClose = () => {
-    setViewDialogOpen(false);
-    setSelectedOrder(null);
+    navigate(`/admin/orders/${order.id}`);
   };
 
   const handleStatusClick = (order) => {
@@ -157,21 +144,11 @@ const OrderManagement = () => {
     });
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'PENDING':
-        return 'warning';
-      case 'ACCEPTED':
-        return 'info';
-      case 'PAID':
-        return 'primary';
-      case 'SENT':
-        return 'success';
-      case 'CANCELLED':
-        return 'error';
-      default:
-        return 'default';
+  const getItemCount = (order) => {
+    if (order.orderItems && order.orderItems.length > 0) {
+      return order.orderItems.reduce((sum, item) => sum + item.quantity, 0);
     }
+    return order.products?.length || 0;
   };
 
   return (
@@ -186,7 +163,7 @@ const OrderManagement = () => {
         {/* Statistics Cards */}
         {stats && (
           <Grid container spacing={2} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2.4}>
               <Card>
                 <CardContent>
                   <Typography color="text.secondary" gutterBottom>
@@ -198,7 +175,7 @@ const OrderManagement = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2.4}>
               <Card>
                 <CardContent>
                   <Typography color="text.secondary" gutterBottom>
@@ -210,19 +187,31 @@ const OrderManagement = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2.4}>
               <Card>
                 <CardContent>
                   <Typography color="text.secondary" gutterBottom>
-                    Sent
+                    Processing
                   </Typography>
-                  <Typography variant="h4" fontWeight="bold" color="success.main">
-                    {stats.sentOrders}
+                  <Typography variant="h4" fontWeight="bold" color="info.main">
+                    {stats.processingOrders}
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <Card>
+                <CardContent>
+                  <Typography color="text.secondary" gutterBottom>
+                    Delivered
+                  </Typography>
+                  <Typography variant="h4" fontWeight="bold" color="success.main">
+                    {stats.deliveredOrders}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
               <Card>
                 <CardContent>
                   <Typography color="text.secondary" gutterBottom>
@@ -248,8 +237,8 @@ const OrderManagement = () => {
             >
               <MenuItem value="">All Orders</MenuItem>
               {ORDER_STATUSES.map((status) => (
-                <MenuItem key={status} value={status}>
-                  {status}
+                <MenuItem key={status.id} value={status.id}>
+                  {status.label}
                 </MenuItem>
               ))}
             </Select>
@@ -291,23 +280,23 @@ const OrderManagement = () => {
                     <TableCell>{formatDate(order.date)}</TableCell>
                     <TableCell>
                       <Typography variant="body2" fontWeight="medium">
-                        {order.userName || 'N/A'}
+                        {order.customerName || order.userName || 'N/A'}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {order.userEmail}
+                        {order.customerEmail || order.userEmail}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      {order.products?.length || 0} item(s)
+                      {getItemCount(order)} item(s)
                     </TableCell>
                     <TableCell align="right">
                       {formatPrice(order.price)}
                     </TableCell>
                     <TableCell align="center">
                       <Chip
-                        label={order.status}
+                        label={getOrderStatusLabel(order.status)}
                         size="small"
-                        color={getStatusColor(order.status)}
+                        color={getOrderStatusColor(order.status)}
                       />
                     </TableCell>
                     <TableCell align="center">
@@ -315,7 +304,7 @@ const OrderManagement = () => {
                         color="primary"
                         onClick={() => handleViewClick(order)}
                         size="small"
-                        title="View Details"
+                        title="View & Edit Details"
                       >
                         <ViewIcon />
                       </IconButton>
@@ -323,7 +312,7 @@ const OrderManagement = () => {
                         color="secondary"
                         onClick={() => handleStatusClick(order)}
                         size="small"
-                        title="Update Status"
+                        title="Quick Status Update"
                       >
                         <EditIcon />
                       </IconButton>
@@ -335,71 +324,6 @@ const OrderManagement = () => {
           </TableContainer>
         )}
       </Container>
-
-      {/* View Order Dialog */}
-      <Dialog open={viewDialogOpen} onClose={handleViewClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Order Details - #{selectedOrder?.id}</DialogTitle>
-        <DialogContent>
-          {selectedOrder && (
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary">
-                Date
-              </Typography>
-              <Typography variant="body1" gutterBottom>
-                {formatDate(selectedOrder.date)}
-              </Typography>
-
-              <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
-                Customer
-              </Typography>
-              <Typography variant="body1">
-                {selectedOrder.userName || 'N/A'}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                {selectedOrder.userEmail}
-              </Typography>
-
-              <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
-                Status
-              </Typography>
-              <Chip
-                label={selectedOrder.status}
-                size="small"
-                color={getStatusColor(selectedOrder.status)}
-                sx={{ mb: 2 }}
-              />
-
-              <Divider sx={{ my: 2 }} />
-
-              <Typography variant="subtitle2" color="text.secondary">
-                Products
-              </Typography>
-              <List dense>
-                {selectedOrder.products?.map((product, index) => (
-                  <ListItem key={index} disablePadding>
-                    <ListItemText
-                      primary={product.name}
-                      secondary={formatPrice(product.price)}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-
-              <Divider sx={{ my: 2 }} />
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="h6">Total</Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {formatPrice(selectedOrder.price)}
-                </Typography>
-              </Box>
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleViewClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
 
       {/* Update Status Dialog */}
       <Dialog open={statusDialogOpen} onClose={handleStatusClose}>
@@ -416,12 +340,15 @@ const OrderManagement = () => {
               onChange={(e) => setNewStatus(e.target.value)}
             >
               {ORDER_STATUSES.map((status) => (
-                <MenuItem key={status} value={status}>
-                  {status}
+                <MenuItem key={status.id} value={status.id}>
+                  {status.label}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+            Note: Only valid status transitions are allowed by the server.
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleStatusClose}>Cancel</Button>

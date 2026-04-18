@@ -26,8 +26,6 @@ public class Product {
 
     private Double price;
 
-    private Integer stock;
-
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -35,12 +33,43 @@ public class Product {
     @Builder.Default
     private Boolean active = true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Order> orders = new ArrayList<>();
+
+    // ==================== NEW: Stock field for quantity validation ====================
+    
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer stock = 0;
+    
+    /**
+     * Check if requested quantity is available
+     */
+    public boolean hasStock(int requestedQuantity) {
+        return stock != null && stock >= requestedQuantity;
+    }
+    
+    /**
+     * Decrease stock by specified amount
+     */
+    public void decreaseStock(int amount) {
+        if (stock != null && stock >= amount) {
+            this.stock -= amount;
+        } else {
+            throw new IllegalStateException("Insufficient stock");
+        }
+    }
+    
+    /**
+     * Increase stock by specified amount
+     */
+    public void increaseStock(int amount) {
+        this.stock = (stock != null ? stock : 0) + amount;
+    }
 
 }

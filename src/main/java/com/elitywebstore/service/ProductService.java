@@ -9,6 +9,7 @@ import com.elitywebstore.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +20,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ProductService {
-
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final ModelMapper modelMapper;
 
     // Default placeholder image for products without images
     private static final String DEFAULT_PRODUCT_IMAGE = "https://via.placeholder.com/300x300?text=No+Image";
@@ -181,24 +182,21 @@ public class ProductService {
     }
 
     // ==================== HELPER METHODS ====================
-
-    private ProductResponseDto convertToDto(Product product) {
-        ProductResponseDto dto = new ProductResponseDto();
-        dto.setId(product.getId());
-        dto.setName(product.getName());
-        dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
-        dto.setStock(product.getStock());
-        dto.setImageUrl(product.getImageUrl() != null ? product.getImageUrl() : DEFAULT_PRODUCT_IMAGE);
+        private ProductResponseDto convertToDto(Product product) {
+            ProductResponseDto dto = modelMapper.map(product, ProductResponseDto.class);
         
-        if (product.getCategory() != null) {
-            dto.setCategoryId(product.getCategory().getId());
-            dto.setCategoryName(product.getCategory().getName());
+            // Add stock information
+            dto.setStock(product.getStock());
+            dto.setInStock(product.getStock() != null && product.getStock() > 0);
+        
+            // Add category info if exists
+            if (product.getCategory() != null) {
+                dto.setCategoryId(product.getCategory().getId());
+                dto.setCategoryName(product.getCategory().getName());
+            }
+        
+            return dto;
         }
-        
-        return dto;
-    }
-
     private ProductResponseDto convertToDtoWithStatus(Product product) {
         ProductResponseDto dto = convertToDto(product);
         dto.setActive(product.getActive() == null ? true : product.getActive());

@@ -2,8 +2,14 @@ import api from './api';
 
 const addressService = {
   getAllByUserId: async (userId) => {
-    console.log('addressService.getAllByUserId called with userId:', userId);
+    console.log('Getting all addresses for userId:', userId);
     const response = await api.get(`/addresses/user/${userId}`);
+    return response.data;
+  },
+
+  getByUserIdAndType: async (userId, addressType) => {
+    console.log('Getting addresses for userId:', userId, 'type:', addressType);
+    const response = await api.get(`/addresses/user/${userId}/type/${addressType}`);
     return response.data;
   },
 

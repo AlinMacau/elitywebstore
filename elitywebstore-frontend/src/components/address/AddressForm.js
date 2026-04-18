@@ -9,9 +9,9 @@ import {
   MenuItem,
 } from '@mui/material';
 
-const AddressForm = ({ open, onClose, onSubmit, address }) => {
+const AddressForm = ({ open, onClose, onSubmit, address, defaultType = 'SHIPPING' }) => {
   const [formData, setFormData] = useState({
-    addressType: 'SHIPPING',
+    addressType: defaultType,
     street: '',
     city: '',
     county: '',
@@ -20,23 +20,25 @@ const AddressForm = ({ open, onClose, onSubmit, address }) => {
 
   useEffect(() => {
     if (address) {
+      // Editing existing address
       setFormData({
-        addressType: address.addressType || 'SHIPPING',
+        addressType: address.addressType || defaultType,
         street: address.street || '',
         city: address.city || '',
         county: address.county || '',
         postalCode: address.postalCode || '',
       });
     } else {
+      // Creating new address - use defaultType
       setFormData({
-        addressType: 'SHIPPING',
+        addressType: defaultType,
         street: '',
         city: '',
         county: '',
         postalCode: '',
       });
     }
-  }, [address, open]);
+  }, [address, open, defaultType]);
 
   const handleChange = (e) => {
     setFormData({
@@ -50,10 +52,17 @@ const AddressForm = ({ open, onClose, onSubmit, address }) => {
     onSubmit(formData);
   };
 
+  const getTitle = () => {
+    if (address) {
+      return `Edit ${address.addressType === 'SHIPPING' ? 'Shipping' : 'Billing'} Address`;
+    }
+    return `Add New ${defaultType === 'SHIPPING' ? 'Shipping' : 'Billing'} Address`;
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>{address ? 'Edit Address' : 'Add New Address'}</DialogTitle>
+        <DialogTitle>{getTitle()}</DialogTitle>
         <DialogContent>
           <TextField
             select
@@ -64,6 +73,7 @@ const AddressForm = ({ open, onClose, onSubmit, address }) => {
             value={formData.addressType}
             onChange={handleChange}
             required
+            disabled={!!address}
           >
             <MenuItem value="SHIPPING">Shipping</MenuItem>
             <MenuItem value="BILLING">Billing</MenuItem>
@@ -77,6 +87,7 @@ const AddressForm = ({ open, onClose, onSubmit, address }) => {
             value={formData.street}
             onChange={handleChange}
             required
+            placeholder="123 Main Street, Apt 4B"
           />
 
           <TextField
@@ -87,6 +98,7 @@ const AddressForm = ({ open, onClose, onSubmit, address }) => {
             value={formData.city}
             onChange={handleChange}
             required
+            placeholder="New York"
           />
 
           <TextField
@@ -97,6 +109,7 @@ const AddressForm = ({ open, onClose, onSubmit, address }) => {
             value={formData.county}
             onChange={handleChange}
             required
+            placeholder="NY"
           />
 
           <TextField
@@ -108,11 +121,16 @@ const AddressForm = ({ open, onClose, onSubmit, address }) => {
             onChange={handleChange}
             required
             inputProps={{ pattern: '[0-9]+', minLength: 2 }}
+            placeholder="10001"
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit" variant="contained" color="primary">
+          <Button 
+            type="submit" 
+            variant="contained" 
+            color={formData.addressType === 'SHIPPING' ? 'primary' : 'secondary'}
+          >
             {address ? 'Update' : 'Add'} Address
           </Button>
         </DialogActions>
@@ -121,5 +139,4 @@ const AddressForm = ({ open, onClose, onSubmit, address }) => {
   );
 };
 
-console.log(localStorage.getItem('user'));
 export default AddressForm;

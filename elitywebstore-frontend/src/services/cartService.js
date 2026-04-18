@@ -1,31 +1,55 @@
 import api from './api';
 
-const cartService = {
+const BASE_URL = '/carts';
+
+export const cartService = {
+  // Get cart by user ID
   getCart: async (userId) => {
-    console.log('Getting cart for userId:', userId);
-    const response = await api.get(`/carts/user/${userId}`);
-    console.log('Cart response:', response.data);
+    const response = await api.get(`${BASE_URL}/user/${userId}`);
     return response.data;
   },
 
-  addToCart: async (userId, productId) => {
-    console.log('Adding to cart - userId:', userId, 'productId:', productId);
-    const response = await api.post('/carts/add', { userId, productId });
-    console.log('Add to cart response:', response.data);
+  // Add product to cart (with optional quantity)
+  addToCart: async (userId, productId, quantity = 1) => {
+    const response = await api.post(`${BASE_URL}/add`, {
+      userId,
+      productId,
+      quantity,
+    });
     return response.data;
   },
 
+  // Update quantity to specific value
+  updateQuantity: async (userId, productId, quantity) => {
+    const response = await api.put(`${BASE_URL}/update-quantity`, {
+      userId,
+      productId,
+      quantity,
+    });
+    return response.data;
+  },
+
+  // Increase quantity by 1
+  increaseQuantity: async (userId, productId) => {
+    const response = await api.put(`${BASE_URL}/increase/${userId}/${productId}`);
+    return response.data;
+  },
+
+  // Decrease quantity by 1 (removes if quantity becomes 0)
+  decreaseQuantity: async (userId, productId) => {
+    const response = await api.put(`${BASE_URL}/decrease/${userId}/${productId}`);
+    return response.data;
+  },
+
+  // Remove product from cart entirely
   removeFromCart: async (userId, productId) => {
-    console.log('Removing from cart - userId:', userId, 'productId:', productId);
-    const response = await api.delete(`/carts/remove/${userId}/${productId}`);
-    console.log('Remove from cart response:', response.data);
+    const response = await api.delete(`${BASE_URL}/remove/${userId}/${productId}`);
     return response.data;
   },
 
+  // Clear entire cart
   clearCart: async (userId) => {
-    console.log('Clearing cart for userId:', userId);
-    await api.delete(`/carts/clear/${userId}`);
-    console.log('Cart cleared');
+    await api.delete(`${BASE_URL}/clear/${userId}`);
   },
 };
 

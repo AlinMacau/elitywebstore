@@ -10,21 +10,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductResponseDto {
+    
     private Long id;
-
     private String name;
-
     private String description;
-
     private Double price;
-
-    private Integer stock;
-
     private String imageUrl;
-
     private Long categoryId;
-
     private String categoryName;
-
+    
+    // ==================== Stock information ====================
+    
+    private Integer stock;
+    private Boolean inStock;
+    
+    // ==================== Status (for admin) ====================
+    
     private Boolean active;
 }
